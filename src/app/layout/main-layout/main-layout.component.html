@@ -1,0 +1,42 @@
+<mat-sidenav-container class="layout">
+  <mat-sidenav mode="side" opened class="sidenav">
+    <div class="brand">
+      <mat-icon>handshake</mat-icon>
+      <span>Sponsorship</span>
+    </div>
+    <mat-nav-list>
+      @for (item of navItems(); track item.link) {
+        <a mat-list-item [routerLink]="item.link" routerLinkActive="active">
+          <mat-icon matListItemIcon>{{ item.icon }}</mat-icon>
+          <span matListItemTitle>{{ item.label }}</span>
+        </a>
+      }
+    </mat-nav-list>
+  </mat-sidenav>
+
+  <mat-sidenav-content>
+    <mat-toolbar class="topbar">
+      <span class="spacer"></span>
+      @if (user(); as u) {
+        <button mat-button [matMenuTriggerFor]="userMenu">
+          <mat-icon>account_circle</mat-icon>
+          <span class="user-name">{{ u.fullName }}</span>
+          <span class="user-role">({{ u.role }})</span>
+        </button>
+        <mat-menu #userMenu="matMenu">
+          <button mat-menu-item disabled>
+            <mat-icon>email</mat-icon>
+            <span>{{ u.email }}</span>
+          </button>
+          <button mat-menu-item (click)="logout()">
+            <mat-icon>logout</mat-icon>
+            <span>Sign out</span>
+          </button>
+        </mat-menu>
+      }
+    </mat-toolbar>
+    <main class="content">
+      <router-outlet />
+    </main>
+  </mat-sidenav-content>
+</mat-sidenav-container>

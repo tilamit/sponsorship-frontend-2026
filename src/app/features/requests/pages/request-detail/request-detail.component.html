@@ -1,0 +1,107 @@
+<div class="page-header">
+  <a mat-icon-button routerLink="/requests" aria-label="Back">
+    <mat-icon>arrow_back</mat-icon>
+  </a>
+  <h2>Request Detail</h2>
+</div>
+
+@if (loading()) {
+  <div class="centered"><mat-spinner diameter="36"></mat-spinner></div>
+} @else if (request(); as r) {
+  <div class="grid">
+    <mat-card class="card-main">
+      <mat-card-header>
+        <mat-card-title>{{ r.title }}</mat-card-title>
+        <mat-card-subtitle>
+          {{ r.requestorName }} • {{ r.department }} • <app-status-badge [status]="r.status" />
+        </mat-card-subtitle>
+      </mat-card-header>
+
+      <mat-card-content>
+        <div class="fields">
+          <div><label>Sponsorship Type</label><span>{{ r.sponsorshipTypeName }}</span></div>
+          <div><label>Event / Org</label><span>{{ r.eventName }}</span></div>
+          <div><label>Event Date</label><span>{{ r.eventDate | date:'mediumDate' }}</span></div>
+          <div><label>Requested Amount</label><span class="amount">{{ r.requestedAmount | currency:'USD' }}</span></div>
+          <div class="full"><label>Purpose</label><p>{{ r.purpose }}</p></div>
+          @if (r.expectedBenefit) {
+            <div class="full"><label>Expected Benefit</label><p>{{ r.expectedBenefit }}</p></div>
+          }
+          @if (r.remarks) {
+            <div class="full"><label>Remarks</label><p>{{ r.remarks }}</p></div>
+          }
+          <div><label>Created</label><span>{{ r.createdAt | date:'medium' }}</span></div>
+          @if (r.updatedAt) {
+            <div><label>Last Updated</label><span>{{ r.updatedAt | date:'medium' }}</span></div>
+          }
+        </div>
+      </mat-card-content>
+
+      <mat-card-actions class="actions" align="end">
+        @if (canEdit()) {
+          <a mat-stroked-button [routerLink]="['/requests', r.id, 'edit']">
+            <mat-icon>edit</mat-icon> Edit
+          </a>
+        }
+        @if (canSubmit()) {
+          <button mat-flat-button color="primary" (click)="submit()" [disabled]="busy()">
+            <mat-icon>send</mat-icon> Submit for Approval
+          </button>
+        }
+        @if (canCancel()) {
+          <button mat-stroked-button color="warn" (click)="cancel()" [disabled]="busy()">
+            <mat-icon>cancel</mat-icon> Cancel Request
+          </button>
+        }
+        @if (canManagerDecide()) {
+          <button mat-stroked-button color="warn" (click)="managerDecide(2)" [disabled]="busy()">
+            <mat-icon>close</mat-icon> Reject
+          </button>
+          <button mat-flat-button color="primary" (click)="managerDecide(1)" [disabled]="busy()">
+            <mat-icon>check</mat-icon> Approve (Manager)
+          </button>
+        }
+        @if (canFinanceDecide()) {
+          <button mat-stroked-button color="warn" (click)="financeDecide(2)" [disabled]="busy()">
+            <mat-icon>close</mat-icon> Reject
+          </button>
+          <button mat-flat-button color="primary" (click)="financeDecide(1)" [disabled]="busy()">
+            <mat-icon>check</mat-icon> Approve (Finance)
+          </button>
+        }
+      </mat-card-actions>
+    </mat-card>
+
+    <mat-card class="card-history">
+      <mat-card-header>
+        <mat-card-title>Workflow History</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        @if (history().length === 0) {
+          <div class="muted">No actions yet.</div>
+        } @else {
+          <ul class="timeline">
+            @for (h of history(); track h.id) {
+              <li>
+                <div class="t-dot" [class.approve]="h.action === 'Approve'"
+                                   [class.reject]="h.action === 'Reject'"
+                                   [class.cancel]="h.action === 'Cancel'"></div>
+                <div class="t-body">
+                  <div class="t-head">
+                    <strong>{{ h.action }}</strong> by {{ h.actionByName }}
+                  </div>
+                  <div class="t-status">
+                    <app-status-badge [status]="h.fromStatus" /> →
+                    <app-status-badge [status]="h.toStatus" />
+                  </div>
+                  @if (h.remarks) { <div class="t-remarks">"{{ h.remarks }}"</div> }
+                  <div class="t-time">{{ h.actionAt | date:'medium' }}</div>
+                </div>
+              </li>
+            }
+          </ul>
+        }
+      </mat-card-content>
+    </mat-card>
+  </div>
+}

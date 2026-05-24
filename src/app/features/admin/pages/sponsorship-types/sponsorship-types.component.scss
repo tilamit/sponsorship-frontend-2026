@@ -1,0 +1,30 @@
+.page-header h2 {
+  margin: 0 0 16px;
+  font-weight: 500;
+}
+
+.add-card {
+  margin-bottom: 16px;
+}
+
+.add-form {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+
+  .grow { flex: 1; }
+}
+
+.table-wrap {
+  background: #fff;
+  border-radius: 4px;
+  overflow: auto;
+}
+
+table { width: 100%; }
+
+.centered {
+  display: flex;
+  justify-content: center;
+  padding: 48px;
+}

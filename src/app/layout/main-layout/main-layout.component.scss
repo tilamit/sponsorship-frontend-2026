@@ -1,0 +1,55 @@
+.layout {
+  height: 100vh;
+}
+
+.sidenav {
+  width: 240px;
+  border-right: 1px solid rgba(0,0,0,0.08);
+  background: #fafafa;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 18px 20px;
+  font-weight: 600;
+  font-size: 18px;
+  color: #1976d2;
+  border-bottom: 1px solid rgba(0,0,0,0.06);
+
+  mat-icon {
+    font-size: 24px;
+    width: 24px;
+    height: 24px;
+  }
+}
+
+::ng-deep .mat-mdc-list-item.active {
+  background: rgba(25, 118, 210, 0.08);
+}
+
+.topbar {
+  background: #fff;
+  border-bottom: 1px solid rgba(0,0,0,0.08);
+  height: 56px;
+  padding: 0 16px;
+}
+
+.spacer { flex: 1 1 auto; }
+
+.user-name {
+  margin-left: 8px;
+  font-weight: 500;
+}
+.user-role {
+  margin-left: 6px;
+  color: rgba(0,0,0,0.55);
+  font-size: 12px;
+}
+
+.content {
+  padding: 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
