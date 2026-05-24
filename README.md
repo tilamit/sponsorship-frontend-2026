@@ -1,8 +1,8 @@
-# Sponsorship Web — Frontend
+# Sponsorship Web - Frontend
 
 Angular 21 single-page app for the **Sponsorship Request Approval Workflow**. Internal staff submit sponsorship requests; managers and finance admins approve or reject them through a multi-stage chain.
 
-> Companion to the ASP.NET Core 8 backend in [`../../Backend`](../../Backend). The API documentation lives there.
+> Companion to the ASP.NET Core 8 backend in [`Backend`](https://github.com/tilamit/sponsorship-backend-2026). The API documentation lives there.
 
 ---
 
@@ -27,11 +27,9 @@ Angular 21 single-page app for the **Sponsorship Request Approval Workflow**. In
 
 | Component | URL |
 |---|---|
-| Frontend (Cloudflare Pages) | `https://<your-pages-subdomain>.pages.dev` |
-| Backend API | `https://<your-api>.runasp.net` |
-| Swagger UI | `https://<your-api>.runasp.net/swagger` |
-
-> Fill in once deployed.
+| Frontend () | `https://sponsorship-app.puter.site` |
+| Backend API | `https://x1xlffq8-7225.inc1.devtunnels.ms` |
+| Swagger UI | `https://x1xlffq8-7225.inc1.devtunnels.ms/swagger/index.html` |
 
 ---
 
@@ -59,7 +57,7 @@ Angular 21 single-page app for the **Sponsorship Request Approval Workflow**. In
 | Node.js | **20.x LTS** (or 22.x) | https://nodejs.org/ |
 | npm | 10.x (ships with Node) | — |
 | Angular CLI | **21.x** | `npm i -g @angular/cli@21` |
-| Backend API running | `https://localhost:7225` | See [`../../Backend/README.md`](../../Backend/README.md) |
+| Backend API running | `https://localhost:7225` | See [`README.md`](https://github.com/tilamit/sponsorship-backend-2026/blob/master/README.md) |
 
 > **HTTPS is required for local dev.** The backend issues `Secure` cookies for the refresh token; browsers reject those on plain HTTP. Trust the .NET dev cert once with:
 >
@@ -194,7 +192,7 @@ Every transition appends a row to `WorkflowHistory` on the API side. The request
 
 ## 7. Authentication Flow
 
-The app uses a **split-token model** with the refresh token in an httpOnly cookie — never in JavaScript-readable storage. This means a successful XSS cannot steal the long-lived refresh token.
+The app uses a **split-token model** with the refresh token in an httpOnly cookie - never in JavaScript-readable storage. This means a successful XSS cannot steal the long-lived refresh token.
 
 ### Login
 
@@ -214,7 +212,7 @@ Browser                                API
 
 `auth.interceptor.ts` runs on every outgoing HTTP call:
 
-1. **Proactive refresh** — if the access token expires within 10 s, kick off a refresh *before* sending the request.
+1. **Proactive refresh** - if the access token expires within 10 s, kick off a refresh *before* sending the request.
 2. **Attach** `Authorization: Bearer <accessToken>`.
 3. **Send with `withCredentials: true`** so the refresh cookie is included on `/api/auth/*` calls.
 4. **Reactive fallback** — if a request still comes back `401`, attempt one refresh and retry the original call.
@@ -257,8 +255,6 @@ Local cleanup happens immediately so a flaky network or already-revoked session 
 | `localStorage['sponsorship.auth']` | access token + user profile + expiry | Survives reload; not sensitive on its own (short-lived) |
 | `Cookie refreshToken` | opaque refresh token | `HttpOnly` → not readable from JS, immune to XSS exfiltration |
 
-> **Production hardening callout:** `SameSite=Strict` is great for security but breaks the refresh flow if the frontend and API are on different eTLD+1 domains. If you deploy the SPA to `pages.dev` and the API to `runasp.net`, switch the cookie to `SameSite=None` (still `Secure` + `HttpOnly`) on the backend. Documented in the backend README.
-
 ---
 
 ## 8. Routes & Role Gating
@@ -274,7 +270,7 @@ Local cleanup happens immediately so a flaky network or already-revoked session 
 | `/workflow/finance` | `FinanceQueueComponent` | `authGuard` | FinanceAdmin, SystemAdmin |
 | `/admin/sponsorship-types` | `SponsorshipTypesComponent` | `authGuard` + `roleGuard('SystemAdmin')` | SystemAdmin |
 
-**Sidenav is dynamic** — `MainLayoutComponent.navItems` is a `computed()` over the current user signal, so menu entries flip based on role at runtime.
+**Sidenav is dynamic** - `MainLayoutComponent.navItems` is a `computed()` over the current user signal, so menu entries flip based on role at runtime.
 
 ---
 
@@ -289,13 +285,11 @@ The backend seeds these on first startup:
 | `finance@demo.local` | `Demo@123` | FinanceAdmin |
 | `admin@demo.local` | `Demo@123` | SystemAdmin |
 
-> The login screen shows a "Demo accounts" panel so reviewers can copy/paste without leaving the page.
+> The login screen shows "Demo accounts" at the bottom, just click on them.
 
 ---
 
 ## 10. Screenshots
-
-Drop captures into `docs/screenshots/` and they'll render below on GitHub. Suggested set:
 
 | File | What to capture |
 |---|---|
@@ -319,23 +313,10 @@ npm run build
 
 Initial bundle target: **≤ 700 kB warning, 1 MB error** (configured in `angular.json`).
 
-### Cloudflare Pages (recommended)
+### Project URL
 
-1. Push this repo to GitHub.
-2. Cloudflare Dashboard → **Pages** → **Create a project** → connect repo.
-3. Build configuration:
-   - **Root directory**: `Frontend/sponsorship-web`
-   - **Build command**: `npm ci && npm run build -- --configuration production`
-   - **Output directory**: `dist/sponsorship-web/browser`
-   - **Node version** (env var): `20`
-4. Before the first build, edit `src/environments/environment.prod.ts`:
-   ```ts
-   export const environment = {
-     production: true,
-     apiBaseUrl: 'https://<your-api>.runasp.net'
-   };
-   ```
-5. Commit, push, deploy. Cloudflare assigns `https://<project>.pages.dev` with free HTTPS.
+1. Hosted in Puter
+2. Frontend - https://sponsorship-app.puter.site
 
 ### Backend CORS
 
@@ -345,7 +326,7 @@ The API needs your Pages URL in its allowed origins list. In `Backend/src/Sponso
 "Cors": {
   "AllowedOrigins": [
     "http://localhost:4200",
-    "https://<your-project>.pages.dev"
+    "https://sponsorship-app.puter.site"
   ]
 }
 ```
