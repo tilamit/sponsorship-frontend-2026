@@ -28,8 +28,8 @@ Angular 21 single-page app for the **Sponsorship Request Approval Workflow**. In
 | Component | URL |
 |---|---|
 | Frontend () | `https://sponsorship-app.puter.site` |
-| Backend API | `https://x1xlffq8-7225.inc1.devtunnels.ms` |
-| Swagger UI | `https://x1xlffq8-7225.inc1.devtunnels.ms/swagger/index.html` |
+| Backend API | `https://atbest2020-001-site1.ntempurl.com` |
+| Swagger UI | `https://atbest2020-001-site1.ntempurl.com/swagger/index.html` |
 
 ---
 
