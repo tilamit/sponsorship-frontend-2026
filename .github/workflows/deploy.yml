@@ -43,9 +43,49 @@ jobs:
         run: npx puter-cli login --username ${{ secrets.PUTER_USERNAME }} --password ${{ secrets.PUTER_PASSWORD }} --non-interactive
 
       # Step 7: Deploy ONLY the browser folder to your existing subdomain
+      # .github/workflows/deploy.yml
+name: Build and Deploy Angular to Puter
+
+on:
+  push:
+    branches:
+      - master  # Triggers on push to master branch
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Checkout your source code
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Step 2: Setup Node.js (24+ required by Puter.js)
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: 'npm'
+          cache-dependency-path: './package-lock.json'
+
+      # Step 3: Install Angular project dependencies
+      - name: Install dependencies
+        run: npm install
+        working-directory: ./
+
+      # Step 4: Build the Angular app in production mode
+      - name: Build Angular app
+        run: npm run build -- --configuration production
+        working-directory: ./
+        # This creates ./dist/[project-name]/browser
+
+      # Step 5: Install the Puter.js SDK (ephemeral, not saved to package.json)
+      - name: Install Puter.js SDK
+        run: npm install @heyputer/puter.js --no-save
+
+      # Step 6: Deploy the browser folder via the Puter.js script
       - name: Deploy to sponsorship-app.puter.site
         run: |
-          # Find the browser folder (handles variable Angular project names)
           BROWSER_PATH=$(find ./dist -type d -name "browser" | head -1)
 
           if [ -z "$BROWSER_PATH" ]; then
@@ -53,11 +93,7 @@ jobs:
             exit 1
           fi
 
-          echo "✅ Deploying from: $BROWSER_PATH"
-          cd "$BROWSER_PATH"
-
-          # site:deploy is an interactive-shell (REPL) command, so feed it via stdin.
-          # The CLI reads PUTER_API_KEY from the environment for authentication.
-          echo "site:deploy . --subdomain=sponsorship-app" | npx puter-cli
-
-          echo "✅ Deployment complete! Your app is live at https://sponsorship-app.puter.site"
+          echo "✅ Found build at: $BROWSER_PATH"
+          node deploy-to-puter.mjs "$BROWSER_PATH"
+        env:
+          PUTER_AUTH_TOKEN: ${{ secrets.PUTER_AUTH_TOKEN }}
