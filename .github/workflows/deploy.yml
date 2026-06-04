@@ -9,7 +9,7 @@ on:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
-
+    
     steps:
       # Step 1: Checkout your source code
       - name: Checkout code
@@ -38,7 +38,11 @@ jobs:
       - name: Install Puter CLI
         run: npm install -g puter-cli
 
-      # Step 6: Deploy to sponsorship-app.puter.site using auth token
+      # Step 6: Authenticate with Puter using app password
+      - name: Login to Puter
+        run: npx puter-cli login --username ${{ secrets.PUTER_USERNAME }} --password ${{ secrets.PUTER_PASSWORD }} --non-interactive
+
+      # Step 7: Deploy ONLY the browser folder to your existing subdomain
       - name: Deploy to sponsorship-app.puter.site
         run: |
           # Find the browser folder (handles variable Angular project names)
@@ -57,5 +61,3 @@ jobs:
           echo "site:deploy . --subdomain=sponsorship-app" | npx puter-cli
 
           echo "✅ Deployment complete! Your app is live at https://sponsorship-app.puter.site"
-        env:
-          PUTER_API_KEY: ${{ secrets.PUTER_AUTH_TOKEN }}
