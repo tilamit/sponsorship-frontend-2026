@@ -9,7 +9,7 @@ on:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
-    
+
     steps:
       # Step 1: Checkout your source code
       - name: Checkout code
@@ -43,19 +43,19 @@ jobs:
         run: |
           # Find the browser folder (handles variable Angular project names)
           BROWSER_PATH=$(find ./dist -type d -name "browser" | head -1)
-          
+
           if [ -z "$BROWSER_PATH" ]; then
             echo "❌ Error: browser folder not found in dist/"
             exit 1
           fi
-          
+
           echo "✅ Deploying from: $BROWSER_PATH"
           cd "$BROWSER_PATH"
-          
-          # Deploy to your existing subdomain - this will OVERWRITE all files
-          # The CLI automatically uses PUTER_API_KEY environment variable for authentication
-          npx puter-cli site:deploy . --subdomain sponsorship-app
-          
+
+          # site:deploy is an interactive-shell (REPL) command, so feed it via stdin.
+          # The CLI reads PUTER_API_KEY from the environment for authentication.
+          echo "site:deploy . --subdomain=sponsorship-app" | npx puter-cli
+
           echo "✅ Deployment complete! Your app is live at https://sponsorship-app.puter.site"
         env:
           PUTER_API_KEY: ${{ secrets.PUTER_AUTH_TOKEN }}
