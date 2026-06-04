@@ -30,7 +30,7 @@ jobs:
 
       # Step 4: Build the Angular app in production mode
       - name: Build Angular app
-        run: npm run build -- --prod
+        run: npm run build -- --configuration production
         working-directory: ./
         # This creates ./dist/[project-name]/browser
 
