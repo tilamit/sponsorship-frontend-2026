@@ -26,13 +26,13 @@ jobs:
       # Step 3: Install Angular project dependencies
       - name: Install dependencies
         run: npm ci
-        working-directory: ./Sponsorship-frontend
+        working-directory: ./
 
       # Step 4: Build the Angular app in production mode
       - name: Build Angular app
         run: npm run build -- --prod
-        working-directory: ./Sponsorship-frontend
-        # This creates ./Sponsorship-frontend/dist/[project-name]/browser
+        working-directory: ./
+        # This creates ./dist/[project-name]/browser
 
       # Step 5: Install Puter CLI globally
       - name: Install Puter CLI
@@ -46,7 +46,7 @@ jobs:
       - name: Deploy to sponsorship-app.puter.site
         run: |
           # Find the browser folder (handles variable Angular project names)
-          BROWSER_PATH=$(find ./Sponsorship-frontend/dist -type d -name "browser" | head -1)
+          BROWSER_PATH=$(find ./dist -type d -name "browser" | head -1)
           
           if [ -z "$BROWSER_PATH" ]; then
             echo "❌ Error: browser folder not found in dist/"
