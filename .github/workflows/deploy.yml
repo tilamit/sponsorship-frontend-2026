@@ -1,0 +1,62 @@
+# .github/workflows/deploy.yml
+name: Build and Deploy Angular to Puter
+
+on:
+  push:
+    branches:
+      - master  # Triggers on push to master branch
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+      # Step 1: Checkout your source code
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Step 2: Setup Node.js environment
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: './Sponsorship-frontend/package-lock.json'
+
+      # Step 3: Install Angular project dependencies
+      - name: Install dependencies
+        run: npm ci
+        working-directory: ./Sponsorship-frontend
+
+      # Step 4: Build the Angular app in production mode
+      - name: Build Angular app
+        run: npm run build -- --prod
+        working-directory: ./Sponsorship-frontend
+        # This creates ./Sponsorship-frontend/dist/[project-name]/browser
+
+      # Step 5: Install Puter CLI globally
+      - name: Install Puter CLI
+        run: npm install -g puter-cli
+
+      # Step 6: Authenticate with Puter using app password
+      - name: Login to Puter
+        run: npx puter-cli login --username ${{ secrets.PUTER_USERNAME }} --password ${{ secrets.PUTER_PASSWORD }} --non-interactive
+
+      # Step 7: Deploy ONLY the browser folder to your existing subdomain
+      - name: Deploy to sponsorship-app.puter.site
+        run: |
+          # Find the browser folder (handles variable Angular project names)
+          BROWSER_PATH=$(find ./Sponsorship-frontend/dist -type d -name "browser" | head -1)
+          
+          if [ -z "$BROWSER_PATH" ]; then
+            echo "❌ Error: browser folder not found in dist/"
+            exit 1
+          fi
+          
+          echo "✅ Deploying from: $BROWSER_PATH"
+          cd "$BROWSER_PATH"
+          
+          # Deploy to your existing subdomain - this will OVERWRITE all files
+          npx puter-cli site:deploy . --subdomain sponsorship-app
+          
+          echo "✅ Deployment complete! Your app is live at https://sponsorship-app.puter.site"
