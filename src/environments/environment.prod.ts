@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  apiBaseUrl: 'http://sponsorship-api.runasp.net/'
+  apiBaseUrl: 'https://atbest2020-001-site1.ntempurl.com'
 };

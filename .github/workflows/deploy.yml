@@ -1,5 +1,5 @@
 # .github/workflows/deploy.yml
-name: Build and Deploy Angular to Puter
+name: Build and deploy Sponsorship frontend app to Puter
 
 on:
   push:
